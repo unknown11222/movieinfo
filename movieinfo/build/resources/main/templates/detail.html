@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>상세보기</title>
+	<link rel="stylesheet" href="css/style.css">
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+			integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script th:inline="javascript">
+        $(function () {
+            let msg = [[${msg}]];
+            if (msg != null) {
+                alert(msg);
+            }
+        });
+	</script>
+</head>
+<body>
+<div class="wrap">
+	<th:block th:insert="~{fragments::header}"></th:block>
+	<div class="content">
+		<h2 class="form-header">상세 보기</h2>
+		<!-- 게시글 상세 내용 출력(div) -->
+		<div class="detail">
+			<div class="detail-sub">
+				<div class="detail-title">포스터</div>
+				<div class="detail-content">
+					<th:block th:if="${movie.msysname} == null">
+						<img class="poster" th:src="@{/images/no_image.jpg}">
+					</th:block>
+					<th:block th:unless="${movie.msysname} == null">
+						<img class="poster" th:src="${'upload/'+movie.msysname}">
+					</th:block>
+				</div>
+			</div>
+		</div>
+		<div class="detail">
+			<div class="detail-sub">
+				<div class="detail-title">제목</div>
+				<div class="detail-content" th:text="${movie.mname}"></div>
+			</div>
+			<div class="detail-sub">
+				<div class="detail-title">감독</div>
+				<div class="detail-content" th:text="${movie.mdirector}"></div>
+			</div>
+			<div class="detail-sub">
+				<div class="detail-title">주연</div>
+				<div class="detail-content" th:text="${movie.mactor}"></div>
+			</div>
+			<div class="detail-sub">
+				<div class="detail-title">국가</div>
+				<div class="detail-content" th:text="${movie.mnation}"></div>
+			</div>
+			<div class="detail-sub">
+				<div class="detail-title">장르</div>
+				<div class="detail-content" th:text="${movie.mgenre}"></div>
+			</div>
+			<div class="detail-sub">
+				<div class="detail-title">개봉일</div>
+				<div class="detail-content" th:text="${movie.mopen}"></div>
+			</div>
+		</div>
+		<div class="detail">
+			<div class="detail-sub">
+				<div class="synopsis-title">시놉시스</div>
+				<div class="synopsis-content" th:text="${movie.msynopsis}"></div>
+			</div>
+		</div>
+		<div class="detail">
+			<div class="detail-sub">
+				<div class="synopsis-title">태그</div>
+				<div class="synopsis-content" th:utext="${tag}"></div>
+			</div>
+		</div>
+		<div class="btn-area">
+			<button class="btn-write" id="upbtn">U</button>
+			<button class="btn-write" id="delbtn">D</button>
+			<button class="btn-sub" id="backbtn">B</button>
+		</div>
+	</div>
+	<th:block th:insert="~{fragments::footer}"></th:block>
+</div>
+</body>
+<script th:inline="javascript">
+    $("#backbtn").click(function () {
+        const se = [[${session.list}]];
+
+        let cn = "", kw = "", pn = "", lc = "";
+        let urlstr = "/?";
+        if (se != null) {
+            cn = se.colname;
+            kw = se.keyword;
+            pn = se.pageNum;
+            lc = se.listCnt;
+            console.log(cn, kw, pn, lc);
+        }
+        if (cn != "") {
+            urlstr += `&colname=${cn}`;
+        }
+        if (kw != "") {
+            urlstr += `&keyword=${kw}`;
+        }
+        if (pn != "") {
+            urlstr += `&pageNum=${pn}`;
+        }
+        if (lc != "") {
+            urlstr += `&listCnt=${lc}`;
+        }
+        console.log(urlstr);
+        location.href = urlstr;
+    });
+
+    $("#upbtn").click(function () {
+        location.href = "updateForm?mcode=" + [[${movie.mcode}]];
+    });
+
+    //게시글 삭제
+    $("#delbtn").click(function () {
+        let conf = confirm("삭제할까요?");
+        if (conf) {
+            let mc = [[${movie.mcode}]];
+            let mf = [[${movie.msysname}]];
+            location.href = `delete?mcode=${mc}&msysname=${mf}`;
+        }
+    });
+</script>
+</html>

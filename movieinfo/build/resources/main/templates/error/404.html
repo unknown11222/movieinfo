@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>페이지 없음</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+    <th:block th:insert="~{fragments::header}"></th:block>
+    <div class="content">
+        <h2 class="login-header">요청하신 페이지가 없습니다.</h2>
+        <p th:text="${'경로 : ' + path}"></p>
+        <p th:text="${'상태 : ' + status}"></p>
+        <p th:text="${'발생시간 : ' + timestamp}"></p>
+        <p th:text="${'오류 : ' + error}"></p>
+    </div>
+    <th:block th:insert="~{fragments::footer}"></th:block>
+</div>
+</body>
+</html>

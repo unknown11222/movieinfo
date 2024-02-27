@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+<div th:fragment="header" class="top-bar">
+	<img alt="로고" th:src="@{images/mlogo.png}" title="HOME"
+		 class="logo" th:onclick="|location.href='@{/}'|">
+	<h2>영화정보 사이트</h2>
+</div>
+<div th:fragment="footer" class="footer-bar">
+	<img src="images/mlogo.png" class="footer-logo">
+	<span>&copy;ICIA 2023</span>
+</div>
+</body>
+</html>

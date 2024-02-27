@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Board - write</title>
+	<link rel="stylesheet" th:href="@{css/style.css}">
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+			integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script th:inline="javascript">
+        $(function () {
+            let m = [[${msg}]];
+            if (m != null) alert(m);
+
+            //파일 업로드 시 선택한 파일명 출력
+            $("#file").on("change", function () {
+                //파일 입력창(input type=file)에서 파일 목록 가져오기
+                let files = $("#file")[0].files;
+                console.log(files);
+
+                let fileName = "";
+
+                if (files.length > 1) {//하나 이상의 파일을 선택했을 경우
+                    fileName = files[0].name + " 외 " + (files.length - 1) + "개";
+                } else if (files.length == 1) {
+                    fileName = files[0].name;
+                } else {//파일 선택 창에서 '취소' 버튼을 클릭
+                    fileName = "파일선택";
+                }
+
+                $(".upload-name").val(fileName);
+            });
+        });
+	</script>
+</head>
+<body>
+<div class="wrap">
+	<th:block th:insert="~{fragments::header}"></th:block>
+	<div class="content">
+		<form th:action="@{writeProc}" method="post"
+			  enctype="multipart/form-data">
+			<h2 class="form-header">영화 등록</h2>
+			<div class="filebox">
+				<!-- 파일 입력 처리 영역 -->
+				<label for="file">포스터</label>
+				<input type="file" name="files" id="file">
+				<input type="text" class="upload-name" value="파일선택" readonly>
+			</div>
+			<input type="text" class="write-input" name="mname" autofocus placeholder="제목" required>
+			<input type="text" class="write-input" name="mdirector" placeholder="감독" required>
+			<input type="text" class="write-input" name="mnation" placeholder="국가" required>
+			<input type="text" class="write-input" name="mgenre" placeholder="장르" required>
+			<input type="text" class="write-input" name="mactor" placeholder="주연배우" required>
+			<input type="date" class="write-input" name="mopen" placeholder="개봉일" required>
+			<textarea rows="10" class="write-input ta" name="msynopsis" placeholder="영화 개요"></textarea>
+			<div class="btn-area">
+				<input type="submit" class="btn-write" value="W">
+				<input type="reset" class="btn-write" value="R">
+				<input type="button" class="btn-write" value="B" id="backbtn">
+			</div>
+		</form>
+	</div>
+	<th:block th:insert="~{fragments::footer}"></th:block>
+</div>
+</body>
+<script th:inline="javascript">
+    $("#backbtn").click(function () {
+        const se = [[${session.list}]];
+
+        let cn = "", kw = "", pn = "", lc = "";
+        let urlstr = "/?";
+        if (se != null) {
+            cn = se.colname;
+            kw = se.keyword;
+            pn = se.pageNum;
+            lc = se.listCnt;
+            console.log(cn, kw, pn, lc);
+        }
+        if (cn != "") {
+            urlstr += `&colname=${cn}`;
+        }
+        if (kw != "") {
+            urlstr += `&keyword=${kw}`;
+        }
+        if (pn != "") {
+            urlstr += `&pageNum=${pn}`;
+        }
+        if (lc != "") {
+            urlstr += `&listCnt=${lc}`;
+        }
+        location.href = urlstr;
+    });
+</script>
+</html>

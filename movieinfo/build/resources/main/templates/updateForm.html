@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>글수정</title>
+	<link rel="stylesheet" th:href="@{css/style.css}">
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+			integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script th:inline="javascript">
+        $(function () {
+            let msg = [[${msg}]];
+            if (msg != null) {
+                alert(msg);
+            }
+        });
+	</script>
+</head>
+<body>
+<div class="wrap">
+	<th:block th:insert="~{fragments::header}"></th:block>
+	<div class="content">
+		<form th:action="@{updateProc}" method="post" enctype="multipart/form-data">
+			<h2 class="form-header">영화 정보 수정</h2>
+			<input type="hidden" name="mcode" th:value="${movie.mcode}">
+
+			<input type="text" class="write-input" th:value="${movie.mname}"
+				   name="mname" autofocus placeholder="제목" required>
+
+			<input type="text" class="write-input" th:value="${movie.mdirector}"
+				   name="mdirector" placeholder="감독" required>
+
+			<input type="text" class="write-input" th:value="${movie.mnation}"
+				   name="mnation" placeholder="국가" required>
+
+			<input type="text" class="write-input" th:value="${movie.mgenre}"
+				   name="mgenre" placeholder="장르" required>
+
+			<input type="text" class="write-input" th:value="${movie.mactor}"
+				   name="mactor" placeholder="주연배우" required>
+
+			<input type="text" class="write-input" th:value="${movie.mopen}"
+				   name="mopen" placeholder="개봉일" required>
+
+			<textarea rows="10" class="write-input ta" name="msynopsis"
+					  placeholder="영화 개요" th:text="${movie.msynopsis}"></textarea>
+			<input type="hidden" th:value="${movie.moriname}" name="moriname">
+			<input type="hidden" th:value="${movie.msysname}" name="msysname">
+
+			<div class="detail">
+				<div class="detail-sub">
+					<div class="detail-title">포스터</div>
+					<div class="detail-content">
+						<th:block th:if="${movie.msysname} == null">
+							<img class="poster" th:src="@{/images/no_image.jpg}">
+						</th:block>
+						<th:block th:unless="${movie.msysname} == null">
+							<img class="poster" th:src="${'upload/'+movie.msysname}">
+						</th:block>
+					</div>
+				</div>
+			</div>
+
+			<div class="filebox">
+				<!-- 수정 파일 입력 처리 영역 -->
+				<label for="file">업로드</label>
+				<input type="file" name="files" id="file" multiple>
+				<input type="text" class="upload-name" value="파일선택" readonly>
+			</div>
+
+			<div class="btn-area">
+				<input type="submit" class="btn-write" value="U">
+				<input type="reset" class="btn-write" value="R">
+				<input type="button" class="btn-write" value="B" id="backbtn">
+			</div>
+		</form>
+	</div>
+	<th:block th:insert="~{fragments::footer}"></th:block>
+</div>
+</body>
+<script th:inline="javascript">
+    $("#backbtn").click(function () {
+        location.href = "detail?mcode=" + [[${movie.mcode}]];
+    });
+
+    //파일 업로드 시 선택한 파일명 출력
+    $("#file").on("change", function () {
+        //파일 입력창(input type=file)에서 파일 목록 가져오기
+        let files = $("#file")[0].files;
+        console.log(files);
+
+        let fileName = "";
+
+        if (files.length > 1) {//하나 이상의 파일을 선택했을 경우
+            fileName = files[0].name + " 외 "
+                + (files.length - 1) + "개";
+        } else if (files.length == 1) {
+            fileName = files[0].name;
+        } else {//파일 선택 창에서 '취소' 버튼을 클릭
+            fileName = "파일선택";
+        }
+
+        $(".upload-name").val(fileName);
+    });
+</script>
+</html>

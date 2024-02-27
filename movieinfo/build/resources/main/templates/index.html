@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Home - board</title>
+	<link rel="stylesheet" th:href="@{css/style.css}">
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+			integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script th:inline="javascript">
+        //th:inline 사용 이유 : <script> 태그 안에 있는 thymeleaf문을 제대로 읽을 수 있게 지정.
+        $(function () {
+            let m = [[${msg}]];
+            if (m != null) {
+                alert(m);
+            }
+        });
+	</script>
+</head>
+<body>
+<div class="wrap">
+	<th:block th:insert="~{fragments::header}"></th:block>
+	<div class="content">
+		<div class="list-title">
+			<h2 class="form-header">영화 목록</h2>
+			<button class="wr-btn" th:onclick="|location.href='@{writeForm}'|">
+				영화 등록
+			</button>
+		</div>
+		<div class="data-area">
+			<div class="se-area">
+				<form class="search-box" th:action="@{/}">
+					<th:block th:if="${session.list != null}">
+						<input type="hidden" name="listCnt" th:value="${session.list.listCnt}">
+					</th:block>
+					<select id="selCol" class="sel" name="colname">
+						<option value="mname" selected>제목</option>
+						<option value="mdirector">감독</option>
+					</select>
+					<input id="keyword" name="keyword" placeholder="검색 입력">
+					<input class="btn-search" type="submit" value="S">
+				</form>
+				<select id="listCnt" class="sel">
+					<option value="5">5개씩 보기</option>
+					<option value="10">10개씩 보기</option>
+					<option value="15">15개씩 보기</option>
+				</select>
+			</div>
+			<!-- 영화 목록 출력 -->
+			<th:block th:if="${#lists.isEmpty(mList)}">
+				<div class="movie-item">
+					<span class="none-content">등록된 영화가 없습니다.</span>
+				</div>
+			</th:block>
+			<th:block th:unless="${#lists.isEmpty(mList)}">
+				<th:block th:each="mitem:${mList}">
+					<div class="movie-item">
+						<a th:href="@{detail(mcode=${mitem.mcode})}">
+							<th:block th:if="${mitem.msysname} == null">
+								<img class="poster-pre" th:src="@{/images/no_image.jpg}">
+							</th:block>
+							<th:block th:unless="${mitem.msysname} == null">
+								<img class="poster-pre" th:src="${'upload/'+mitem.msysname}">
+							</th:block>
+						</a>
+						<div class="info-pre">
+							<div class="title-pre">
+								<a th:href="@{detail(mcode=${mitem.mcode})}" th:text="${mitem.mname}"></a>
+							</div>
+							<div class="content-pre" th:text="${mitem.mdirector}"></div>
+							<div class="content-pre" th:text="${mitem.mopen}"></div>
+						</div>
+					</div>
+				</th:block>
+			</th:block>
+		</div>
+		<div class="paging-area">
+			<div class="paging" th:utext="${paging}"></div>
+		</div>
+	</div>
+	<th:block th:insert="~{fragments::footer}"></th:block>
+</div>
+</body>
+<script th:inline="javascript">
+    const se = [[${session.list}]];
+    console.log(se);
+    let selcol = "";
+    //선택 항목을 유지하기 위한 부분
+    if (se != null) {
+        selcol = se.colname;
+        let lcnt = se.listCnt;
+
+        if (selcol == "") {
+            selcol = "mname";
+        }
+
+        $("#selCol").val(selcol).prop("selected", true);
+        $("#listCnt").val(lcnt).prop("selected", true);
+    }
+    //목록 개수 변경 처리
+    $("#listCnt").change(() => {
+        let lc = $("#listCnt").val();
+        console.log(lc);
+        if (selcol != "") {
+            location.href = `/?colname=${selcol}&listCnt=${lc}`
+        } else {
+            location.href = `/?listCnt=${lc}`
+        }
+    });
+    //검색 처리
+
+</script>
+</html>
